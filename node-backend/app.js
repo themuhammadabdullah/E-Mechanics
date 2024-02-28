@@ -1,9 +1,9 @@
 const express = require("express");
-require('dotenv').config({ path: 'node.env' });
+require("dotenv").config({ path: "node.env" });
 const path = require("path");
 const mongoose = require("mongoose");
 const cors = require("cors");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 const User = require("./models/User");
 const Review = require("./models/Review");
 const app = express();
@@ -46,12 +46,16 @@ app.post("/signup", async (req, res) => {
   try {
     const { Name, password, email, phoneNumber, userType, address } = req.body;
 
-    const existingUser = await User.findOne({ $or: [{ email }, { phoneNumber }] });
+    const existingUser = await User.findOne({
+      $or: [{ email }, { phoneNumber }],
+    });
     if (existingUser) {
-     if (existingUser.email === email) {
+      if (existingUser.email === email) {
         return res.status(400).json({ message: "Email already registered" });
       } else if (existingUser.phoneNumber === phoneNumber) {
-        return res.status(400).json({ message: "Phone number already registered" });
+        return res
+          .status(400)
+          .json({ message: "Phone number already registered" });
       }
     }
 
@@ -72,7 +76,6 @@ app.post("/signup", async (req, res) => {
     res.status(500).json({ message: "An error occurred" });
   }
 });
-
 
 app.post("/Review", async (req, res) => {
   try {
@@ -95,21 +98,21 @@ app.post("/Review", async (req, res) => {
 
 app.get("/Review", async (req, res) => {
   try {
-    const reviews = await Review.find({}, 'name email review'); // Query all reviews and project 'name', 'email', and 'review' fields
+    const reviews = await Review.find({}, "name email review"); // Query all reviews and project 'name', 'email', and 'review' fields
     res.status(200).json(reviews);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "An error occurred while fetching reviews" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching reviews" });
   }
 });
-
-
 
 app.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
+    const user = await User.find({ email: email });
 
     if (!user) {
       return res.status(401).json({ message: "Invalid User" });
@@ -133,7 +136,6 @@ app.post("/login", async (req, res) => {
     res.status(500).json({ message: "An error occurred" });
   }
 });
-
 
 app.get("/protected", authenticateToken, (req, res) => {
   res.json({ message: "This is a protected route.", userId: req.userId });
